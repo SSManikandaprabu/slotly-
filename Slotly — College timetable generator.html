@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slotly — Clash-free College Timetable Generator</title>
+<meta name="description" content="Generate clash-free college timetables in seconds. Add subjects and teachers, set your rules, and get section and teacher timetables you can print.">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--sky:#f0f8fc;--pb:#b0e0e6;--pb2:#d3ebf4;--ink:#12304a;--mut:#5b7a8f;--line:#d6e7f0;--card:#fff;--ac:#2f7fa8;--on:#fff;--bad:#c9382e;--ok:#1b8a66;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1823;--sky:#0f2230;--pb:#2c5a6c;--pb2:#16384a;--ink:#e7f3f9;--mut:#8fb1c4;--line:#21404f;--card:#112636;--ac:#8ad0e8;--on:#08202e;--bad:#ff7a6f;--ok:#4cd3a6}}
+:root[data-theme="dark"]{--bg:#0b1823;--sky:#0f2230;--pb:#2c5a6c;--pb2:#16384a;--ink:#e7f3f9;--mut:#8fb1c4;--line:#21404f;--card:#112636;--ac:#8ad0e8;--on:#08202e;--bad:#ff7a6f;--ok:#4cd3a6}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 Inter,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:70}
+h1,h2,h3,.lx{font-family:Lexend,Inter,sans-serif;letter-spacing:-.02em}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nv{max-width:1180px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:22px}
+.brand{font:700 22px Lexend,sans-serif;margin-right:auto}.brand b{color:var(--ac)}
+.nl{display:flex;gap:24px;font-size:15px;color:var(--mut);font-weight:500}.nl a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 22px;font:600 15px Inter,sans-serif;background:var(--ac);color:var(--on);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px color-mix(in srgb,var(--ac) 35%,transparent)}
+.btn.s{background:var(--pb2);color:var(--ink)}.btn.s:hover{box-shadow:none}.btn.o{background:none;border:1.5px solid var(--line);color:var(--ink)}.btn.sm{padding:8px 14px;font-size:14px;border-radius:11px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.hero{background:radial-gradient(900px 420px at 85% 0,var(--pb) 0,transparent 70%),linear-gradient(180deg,var(--sky),var(--bg));padding:78px 0 70px;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:center}
+.pill{display:inline-flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--mut)}.pill i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:700;line-height:1.02;margin:20px 0}.hero h1 em{font-style:normal;color:var(--ac)}
+.hero p{font-size:19px;color:var(--mut);max-width:30em;margin-bottom:30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}.tiny{margin-top:20px;font-size:14px;color:var(--mut);display:flex;gap:18px;flex-wrap:wrap}.tiny span:before{content:"✓ ";color:var(--ok);font-weight:700}
+.mock{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 40px 80px color-mix(in srgb,var(--ac) 18%,transparent);animation:fl 7s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translateY(-10px)}}
+.mock .h{display:flex;justify-content:space-between;font:600 13px Lexend,sans-serif;margin-bottom:10px;color:var(--mut)}.mock .h b{color:var(--ink)}
+.mg{display:grid;grid-template-columns:34px repeat(5,1fr);gap:6px}.mg span{border-radius:9px;min-height:36px;display:grid;place-items:center;font-size:11px;font-weight:600;color:#12304a}.mg .d{min-height:20px;background:none;color:var(--mut);font-size:11px}
+.ok{margin-top:12px;display:flex;justify-content:space-between;align-items:center;background:var(--pb2);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600}.ok b{color:var(--ok)}
+section{padding:90px 0 0}.eb{font:600 13px Lexend,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+h2{font-size:clamp(30px,4.6vw,50px);font-weight:700;line-height:1.05;margin-bottom:14px}.sub{color:var(--mut);max-width:40em;margin-bottom:34px}
+.steps,.feat{display:grid;gap:16px}.steps{grid-template-columns:repeat(3,1fr)}.feat{grid-template-columns:repeat(3,1fr)}
+.cd{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px}.st{counter-increment:n}.st:before{content:"0" counter(n);font:700 38px Lexend,sans-serif;color:var(--pb);display:block;-webkit-text-stroke:1px var(--ac);color:transparent}
+.steps{counter-reset:n}.cd h3{font-size:20px;margin:6px 0}.cd p{color:var(--mut);font-size:15px}.feat .cd:hover{border-color:var(--ac);transform:translateY(-4px)}.feat .cd{transition:.25s}.ic{width:44px;height:44px;border-radius:13px;background:var(--pb2);display:grid;place-items:center;font-size:21px;margin-bottom:12px}
+.app{background:var(--sky);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:90px;padding:80px 0}
+.pn{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;margin-bottom:18px}.pn h3{font-size:20px;margin-bottom:4px}.pn>p{color:var(--mut);font-size:14px;margin-bottom:16px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:grid;gap:5px;font-size:13px;font-weight:600;color:var(--mut)}
+input,select{background:var(--bg);border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;width:100%;min-width:0;color:var(--ink)}
+.tw{overflow-x:auto}table.r{width:100%;border-collapse:separate;border-spacing:0 8px;min-width:640px}table.r th{font-size:12px;color:var(--mut);text-align:left;padding:0 6px;letter-spacing:.06em;text-transform:uppercase}table.r td{padding:0 6px 0 0}
+.row2{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.er{background:color-mix(in srgb,var(--bad) 12%,var(--card));border:1px solid var(--bad);color:var(--bad);border-radius:14px;padding:12px 16px;font-size:14px;margin-bottom:14px}.er ul{padding-left:18px}
+.out{display:none}.out.s{display:block}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.stat small{display:block;color:var(--mut);font-size:12px}.stat b{font:700 22px Lexend,sans-serif}.stat .good b{color:var(--ok)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.tab{background:var(--bg);border:1.5px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:600;font-size:14px;cursor:pointer}.tab[aria-pressed="true"]{background:var(--ac);color:var(--on);border-color:var(--ac)}
+table.tt{width:100%;border-collapse:separate;border-spacing:5px;min-width:720px;table-layout:fixed}.tt th{font:600 13px Lexend,sans-serif;padding:8px 4px;background:var(--pb2);border-radius:10px}.tt th.tm{width:92px;font-size:11px}
+.tt td.c{background:var(--c);color:#12304a;border-radius:11px;padding:8px 9px;height:62px;vertical-align:top}.tt td.c b{display:block;font:600 13px Lexend,sans-serif;line-height:1.2}.tt td.c small{font-size:11px;opacity:.8}
+.tt td.f{border:1.5px dashed var(--line);border-radius:11px;text-align:center;color:var(--mut);font-size:12px}
+.tt td.br{background:repeating-linear-gradient(135deg,var(--pb2) 0 8px,transparent 8px 16px);border-radius:10px;text-align:center;font-size:12px;font-weight:600;color:var(--mut);padding:6px}
+.tt td.pt{font-size:11px;color:var(--mut);text-align:center;font-weight:600}
+.lg{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.lg span{font-size:12px;border-radius:99px;padding:4px 12px;background:var(--c);color:#12304a;font-weight:600}
+.wl{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}.wl th,.wl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}.wl th{color:var(--mut);font-size:12px}
+details{border-bottom:1px solid var(--line);padding:18px 0}summary{font:600 18px Lexend,sans-serif;cursor:pointer;list-style:none;display:flex;justify-content:space-between}summary::after{content:"+";color:var(--ac);font-size:24px;line-height:1}details[open] summary::after{content:"−"}details p{color:var(--mut);margin-top:8px;max-width:48em}
+footer{margin-top:80px;border-top:1px solid var(--line);padding:30px 22px;text-align:center;color:var(--mut);font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:14px;font-size:14px;transition:transform .35s;z-index:80}.toast.s{transform:translate(-50%,0)}
+#pr{display:none}
+@media print{body>*:not(#pr){display:none!important}body{background:#fff;color:#000;padding:0}#pr{display:block}#pr h2{font-size:20px;margin:0 0 8px;color:#000}#pr section{padding:0;page-break-after:always}#pr table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:0}#pr th,#pr td{border:1px solid #888;padding:5px;font-size:11px;text-align:center;height:46px}#pr th{background:#d3ebf4}#pr td.c{background:var(--c)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}#pr td.br{background:#eee;height:20px}#pr small{display:block;font-size:9px}}
+@media (max-width:900px){.nl{display:none}.hero .wrap{grid-template-columns:1fr}.steps,.feat{grid-template-columns:1fr}.stat{grid-template-columns:1fr 1fr}.mock{max-width:480px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.mock{animation:none}.toast,.cd{transition:none}}
+</style>
+</head>
+<body>
+<nav><div class="nv"><a class="brand" href="#top">Slot<b>ly</b></a><div class="nl"><a href="#how">How it works</a><a href="#features">Features</a><a href="#faq">FAQ</a></div><button class="btn o sm" id="th" aria-label="Toggle theme">Theme</button><a class="btn sm" href="#gen">Start building</a></div></nav>
+
+<main id="top">
+<header class="hero"><div class="wrap">
+<div><span class="pill"><i></i>Free · No sign-up · Runs in your browser</span>
+<h1>Timetables without <em>the clashes</em></h1>
+<p>Add your subjects and teachers, set your rules, and get clash-free timetables for every section and every teacher in seconds.</p>
+<div class="cta"><a class="btn" href="#gen">Create my timetable</a><a class="btn s" href="#how">See how it works</a></div>
+<div class="tiny"><span>Shared teachers handled</span><span>Lab blocks supported</span><span>Print-ready</span></div></div>
+<div class="mock" aria-hidden="true"><div class="h"><b>CSE · Section A</b><span>Week 1</span></div><div class="mg" id="mg"></div><div class="ok"><span>Clash check</span><b>0 clashes found</b></div></div>
+</div></header>
+
+<section id="how"><div class="wrap"><div class="eb">How it works</div><h2>Three steps. One clean timetable.</h2><div class="steps">
+<div class="cd st"><h3>Set your rules</h3><p>Choose working days, periods per day, the lunch break and period timings.</p></div>
+<div class="cd st"><h3>Add subjects</h3><p>List each subject with its teacher, section, periods per week and whether it is a lab.</p></div>
+<div class="cd st"><h3>Generate</h3><p>The solver places every period, avoids clashes and verifies the result before showing it.</p></div></div></div></section>
+
+<section id="features"><div class="wrap"><div class="eb">Features</div><h2>Built for real colleges</h2><div class="feat">
+<div class="cd"><div class="ic">🧩</div><h3>Automatic clash solving</h3><p>No teacher is ever in two rooms at once, and no section gets two subjects in one slot.</p></div>
+<div class="cd"><div class="ic">👥</div><h3>Shared teachers</h3><p>One teacher can handle many sections. The solver schedules them around each other.</p></div>
+<div class="cd"><div class="ic">🧪</div><h3>Lab double periods</h3><p>Labs are placed as back-to-back blocks that never split across the lunch break.</p></div>
+<div class="cd"><div class="ic">⚖️</div><h3>Balanced days</h3><p>Subjects are spread across the week, with a limit on the same subject per day.</p></div>
+<div class="cd"><div class="ic">✅</div><h3>Verified result</h3><p>Every timetable is re-checked after solving and shows a clash count.</p></div>
+<div class="cd"><div class="ic">🖨️</div><h3>Print and share</h3><p>Print all sections at once or copy any timetable as CSV for Excel.</p></div></div></div></section>
+
+<div class="app" id="gen"><div class="wrap">
+<div class="eb">Generator</div><h2>Build your timetable</h2><p class="sub">Your data stays in this browser. Start from the sample if you want to see it work first.</p>
+
+<div class="pn"><h3>1. Setup</h3><p>Working days, periods and timings.</p><div class="g">
+<label>Working days<select id="cd"><option value="5">Monday to Friday</option><option value="6">Monday to Saturday</option></select></label>
+<label>Periods per day<input id="cp" type="number" min="4" max="10"></label>
+<label>Lunch after period<input id="cb" type="number" min="0" max="9" title="0 for no break"></label>
+<label>Day starts<input id="cs" type="time"></label>
+<label>Period (minutes)<input id="cl" type="number" min="20" max="120"></label>
+<label>Lunch (minutes)<input id="ck" type="number" min="0" max="90"></label>
+<label>Max periods per teacher per day<input id="ct" type="number" min="1" max="10"></label></div>
+<div class="g" style="margin-top:12px;grid-template-columns:1fr"><label>Sections (comma separated)<input id="sc" placeholder="CSE-A, CSE-B"></label></div></div>
+
+<div class="pn"><h3>2. Subjects and teachers</h3><p>Choose "All sections" to give every section the same subject. Labs are placed as 2-period blocks.</p>
+<div class="tw"><table class="r"><thead><tr><th>Subject</th><th>Teacher</th><th>Section</th><th style="width:100px">Periods / week</th><th style="width:110px">Type</th><th style="width:44px"></th></tr></thead><tbody id="rw"></tbody></table></div>
+<div class="row2"><button class="btn s sm" id="ad">+ Add subject</button><button class="btn o sm" id="sm">Load sample</button><button class="btn o sm" id="cl2">Clear all</button></div></div>
+
+<div class="row2" style="margin:0 0 18px"><button class="btn" id="go">Generate timetable</button></div>
+<div id="err"></div>
+
+<div class="pn out" id="out"><h3>3. Your timetable</h3><p id="meta"></p>
+<div class="stat" id="stat"></div><div class="tabs" id="tabs"></div>
+<div class="tw" id="view"></div><div class="lg" id="lg"></div>
+<div class="row2"><button class="btn" id="rg">Generate another</button><button class="btn s" id="pa">Print all sections</button><button class="btn s" id="cv">Copy CSV</button></div>
+<h3 style="margin-top:26px;font-size:18px">Teacher workload</h3><div class="tw" id="wl"></div></div>
+</div></div>
+
+<section id="faq"><div class="wrap"><div class="eb">FAQ</div><h2>Good questions</h2>
+<details><summary>What if it cannot find a timetable?</summary><p>It tells you why. Usually a section needs more periods than there are slots, or one teacher has too many periods. Reduce periods, add a teacher or raise the daily limit.</p></details>
+<details><summary>Can one teacher teach several sections?</summary><p>Yes. Give them the same name in each row and the solver keeps them from being double-booked.</p></details>
+<details><summary>How are labs scheduled?</summary><p>Labs use two back-to-back periods that stay on one side of the lunch break, at most one block per day.</p></details>
+<details><summary>Is my data uploaded anywhere?</summary><p>No. Everything runs in your browser and is saved only on your device.</p></details></div></section>
+</main>
+<footer>Slotly · A free timetable tool. Always review the generated timetable before publishing it.</footer>
+<div id="pr"></div><div class="toast" id="ts" role="status"></div>
+
+<script>
+const $=i=>document.getElementById(i);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat"],PAL=["#cfe8f3","#d6f0e4","#fde6d0","#e6dcf6","#fbdde5","#fff1bf","#d0ecee","#e2ebfa","#f3e3d3","#dff2c9"];
+const SAMPLE={cfg:{days:5,periods:7,breakAfter:4,start:"09:00",len:50,brk:40,tMax:6},secs:"CSE-A, CSE-B",rows:[
+{subj:"Data Structures",teacher:"Dr. Meera",sec:"*",n:4,type:"Theory"},{subj:"Database Systems",teacher:"Prof. Arun",sec:"*",n:4,type:"Theory"},
+{subj:"Operating Systems",teacher:"Dr. Kavya",sec:"*",n:4,type:"Theory"},{subj:"Computer Networks",teacher:"Prof. Ravi",sec:"*",n:3,type:"Theory"},
+{subj:"Mathematics III",teacher:"Dr. Latha",sec:"*",n:4,type:"Theory"},{subj:"DS Lab",teacher:"Dr. Meera",sec:"*",n:4,type:"Lab"},
+{subj:"Soft Skills",teacher:"Ms. Divya",sec:"*",n:2,type:"Theory"},{subj:"Project Work",teacher:"Prof. Ravi",sec:"*",n:4,type:"Theory"}]};
+let S,R=null,view="";
+try{S=JSON.parse(localStorage.getItem("slotly-v1")||"null")}catch(e){S=null}
+if(!S||!S.cfg||!Array.isArray(S.rows))S=JSON.parse(JSON.stringify(SAMPLE));
+const save=()=>{try{localStorage.setItem("slotly-v1",JSON.stringify(S))}catch(e){}};
+function toast(m){const t=$("ts");t.textContent=m;t.classList.add("s");setTimeout(()=>t.classList.remove("s"),2000)}
+const secs=()=>[...new Set(S.secs.split(",").map(x=>x.trim()).filter(Boolean))];
+const col=n=>{const k=[...new Set(S.rows.map(r=>r.subj))].indexOf(n);return PAL[(k<0?0:k)%PAL.length]};
+const tm=(p)=>{const[h,m]=S.cfg.start.split(":").map(Number);let x=h*60+m+p*S.cfg.len+(S.cfg.breakAfter>0&&p>=S.cfg.breakAfter?S.cfg.brk:0),y=x+S.cfg.len,f=v=>String(Math.floor(v/60)%24).padStart(2,"0")+":"+String(v%60).padStart(2,"0");return f(x)+"–"+f(y)};
+
+/* hero mock */
+(()=>{const c=["#cfe8f3","#d6f0e4","#fde6d0","#e6dcf6","#fff1bf","#d0ecee"],t=["DS","DB","OS","CN","MA","LAB"],h=["","Mon","Tue","Wed","Thu","Fri"];let s="";h.forEach(x=>s+=`<span class="d">${x}</span>`);
+for(let r=0;r<5;r++){s+=`<span class="d">${r+1}</span>`;for(let d=0;d<5;d++){const k=(r*2+d*3+(r>2?1:0))%6;s+=`<span style="background:${c[k]}">${t[k]}</span>`}}$("mg").innerHTML=s})();
+
+/* form <-> state */
+function fillForm(){const c=S.cfg;$("cd").value=c.days;$("cp").value=c.periods;$("cb").value=c.breakAfter;$("cs").value=c.start;$("cl").value=c.len;$("ck").value=c.brk;$("ct").value=c.tMax;$("sc").value=S.secs;rows()}
+function rows(){const sl=secs();$("rw").innerHTML=S.rows.map((r,i)=>`<tr><td><input data-f="subj" data-i="${i}" value="${esc(r.subj)}" aria-label="Subject"></td><td><input data-f="teacher" data-i="${i}" value="${esc(r.teacher)}" aria-label="Teacher"></td>
+<td><select data-f="sec" data-i="${i}" aria-label="Section"><option value="*"${r.sec==="*"?" selected":""}>All sections</option>${sl.map(s=>`<option${r.sec===s?" selected":""}>${esc(s)}</option>`).join("")}</select></td>
+<td><input type="number" min="1" max="12" data-f="n" data-i="${i}" value="${r.n}" aria-label="Periods per week"></td>
+<td><select data-f="type" data-i="${i}" aria-label="Type"><option${r.type==="Theory"?" selected":""}>Theory</option><option${r.type==="Lab"?" selected":""}>Lab</option></select></td>
+<td><button class="btn o sm" data-rm="${i}" aria-label="Remove subject">✕</button></td></tr>`).join("")}
+function readCfg(){const g=i=>+$(i).value;S.cfg={days:g("cd"),periods:g("cp")||7,breakAfter:Math.max(0,g("cb")||0),start:$("cs").value||"09:00",len:g("cl")||50,brk:g("ck")||0,tMax:g("ct")||6};S.secs=$("sc").value}
+["cd","cp","cb","cs","cl","ck","ct"].forEach(i=>$(i).onchange=()=>{readCfg();save()});
+$("sc").onchange=()=>{readCfg();S.rows.forEach(r=>{if(r.sec!=="*"&&!secs().includes(r.sec))r.sec="*"});save();rows()};
+$("rw").addEventListener("input",e=>{const f=e.target.dataset.f;if(!f)return;const r=S.rows[+e.target.dataset.i];r[f]=f==="n"?Math.max(0,parseInt(e.target.value)||0):e.target.value;save()});
+$("rw").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b){S.rows.splice(+b.dataset.rm,1);save();rows()}});
+$("ad").onclick=()=>{S.rows.push({subj:"",teacher:"",sec:"*",n:3,type:"Theory"});save();rows()};
+$("sm").onclick=()=>{S=JSON.parse(JSON.stringify(SAMPLE));save();fillForm();$("out").classList.remove("s");$("err").innerHTML="";toast("Sample loaded")};
+$("cl2").onclick=()=>{S.rows=[];save();rows();$("out").classList.remove("s")};
+
+/* solver */
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function check(){const c=S.cfg,sl=secs(),e=[];
+  if(!sl.length)e.push("Add at least one section.");if(!S.rows.length)e.push("Add at least one subject.");
+  const D=c.days,P=c.periods,slots=D*P,B=c.breakAfter;if(B>=P)e.push("The lunch break must come before the last period (or set it to 0).");
+  const st={},tt={};S.rows.forEach((r,i)=>{const n=i+1;if(!r.subj.trim())e.push(`Row ${n}: enter a subject name.`);if(!r.teacher.trim())e.push(`Row ${n}: enter a teacher.`);if(!(r.n>0))e.push(`Row ${n}: periods per week must be at least 1.`);
+    if(r.type==="Lab"&&r.n>2*D)e.push(`Row ${n}: a lab can have at most ${2*D} periods (one block per day).`);
+    (r.sec==="*"?sl:[r.sec]).forEach(s=>{st[s]=(st[s]||0)+r.n;tt[r.teacher.trim()]=(tt[r.teacher.trim()]||0)+r.n})});
+  Object.entries(st).forEach(([s,n])=>{if(n>slots)e.push(`${s} needs ${n} periods but only has ${slots} slots a week.`)});
+  Object.entries(tt).forEach(([t,n])=>{if(n>slots)e.push(`${t} has ${n} periods but only ${slots} slots exist.`);else if(n>D*Math.min(c.tMax,P))e.push(`${t} has ${n} periods, above the daily limit of ${c.tMax} over ${D} days.`)});
+  return e}
+function solve(){
+  const c=S.cfg,sl=secs(),D=c.days,P=c.periods,B=c.breakAfter,TM=Math.min(c.tMax,P),subs=[];
+  S.rows.forEach(r=>(r.sec==="*"?sl:[r.sec]).forEach(s=>subs.push({sec:s,name:r.subj.trim(),t:r.teacher.trim(),n:r.n,lab:r.type==="Lab"})));
+  const base=[];subs.forEach((s,si)=>{if(s.lab){for(let k=0;k<Math.floor(s.n/2);k++)base.push({si,len:2});if(s.n%2)base.push({si,len:1})}else for(let k=0;k<s.n;k++)base.push({si,len:1})});
+  const tl={};subs.forEach(s=>tl[s.t]=(tl[s.t]||0)+s.n);const cap=subs.map(s=>s.lab?2:Math.ceil(s.n/D)),t0=performance.now();let at=0;
+  while(performance.now()-t0<2500&&at<500){at++;const rnd=rng(at*7919+(Date.now()%100000));
+    const units=base.map(u=>({...u,k:rnd()})).sort((a,b)=>b.len-a.len||tl[subs[b.si].t]-tl[subs[a.si].t]||a.k-b.k);
+    const sg={},sd=subs.map(()=>Array(D).fill(0)),tb={},td={},ld={};
+    sl.forEach(s=>{sg[s]=Array(D*P).fill(-1);ld[s]=Array(D).fill(0)});Object.keys(tl).forEach(t=>{tb[t]=new Uint8Array(D*P);td[t]=Array(D).fill(0)});
+    const out=[];let steps=0;
+    const ok=(u,d,p)=>{const s=subs[u.si];if(p+u.len>P)return false;if(u.len===2&&B>0&&p===B-1)return false;
+      for(let k=0;k<u.len;k++){const x=d*P+p+k;if(sg[s.sec][x]!==-1||tb[s.t][x])return false}
+      return sd[u.si][d]+u.len<=cap[u.si]&&td[s.t][d]+u.len<=TM};
+    const put=(u,d,p,v)=>{const s=subs[u.si];for(let k=0;k<u.len;k++){const x=d*P+p+k;sg[s.sec][x]=v?u.si:-1;tb[s.t][x]=v?1:0}const m=v?u.len:-u.len;sd[u.si][d]+=m;td[s.t][d]+=m;ld[s.sec][d]+=m};
+    const rec=i=>{if(i===units.length)return true;if(++steps>25000)return false;const u=units[i],s=subs[u.si],cs=[];
+      for(let d=0;d<D;d++)for(let p=0;p<=P-u.len;p++)if(ok(u,d,p))cs.push([d,p,ld[s.sec][d]*10+(sd[u.si][d]?25:0)+(u.len===2&&B>0&&p<B?3:0)+rnd()*6]);
+      cs.sort((a,b)=>a[2]-b[2]);for(const[d,p]of cs){put(u,d,p,1);out.push({si:u.si,d,p,len:u.len});if(rec(i+1))return true;put(u,d,p,0);out.pop()}return false};
+    if(rec(0))return{ok:true,place:out,subs,at,ms:Math.round(performance.now()-t0)}}
+  return{ok:false,at}}
+function build(r){const c=S.cfg,sl=secs(),D=c.days,P=c.periods,g={};sl.forEach(s=>g[s]=Array.from({length:D},()=>Array(P).fill(null)));
+  r.place.forEach(pl=>{const s=r.subs[pl.si];for(let k=0;k<pl.len;k++)g[s.sec][pl.d][pl.p+k]={name:s.name,t:s.t,sec:s.sec,lab:s.lab}});
+  const seen={},cl={t:0,s:0};r.place.forEach(pl=>{const s=r.subs[pl.si];for(let k=0;k<pl.len;k++){const a=`t|${s.t}|${pl.d}|${pl.p+k}`,b=`s|${s.sec}|${pl.d}|${pl.p+k}`;if(seen[a])cl.t++;if(seen[b])cl.s++;seen[a]=seen[b]=1}});
+  const tot=r.place.reduce((a,p)=>a+p.len,0),need=r.subs.reduce((a,s)=>a+s.n,0);
+  return{g,clashes:cl.t+cl.s,tot,need}}
+
+/* render */
+function table(getCell,inPrint){const c=S.cfg,D=c.days,P=c.periods,B=c.breakAfter;let h=`<table class="tt"><thead><tr><th class="tm">Time</th>${DAYS.slice(0,D).map(d=>`<th>${d}</th>`).join("")}</tr></thead><tbody>`;
+  for(let p=0;p<P;p++){if(B>0&&p===B)h+=`<tr><td class="br" colspan="${D+1}">Lunch break · ${c.brk} min</td></tr>`;h+=`<tr><td class="pt">P${p+1}<br>${tm(p)}</td>`;
+    for(let d=0;d<D;d++){const x=getCell(d,p);h+=x?`<td class="c" style="--c:${col(x.name)}"><b>${esc(x.name)}${x.lab?" (Lab)":""}</b><small>${esc(x.l2)}</small></td>`:`<td class="f">Free</td>`}h+="</tr>"}return h+"</tbody></table>"}
+function secTable(s){return table((d,p)=>{const x=R.b.g[s][d][p];return x?{...x,l2:x.t}:null})}
+function teachTable(t){const m={};R.b.g&&Object.values(R.b.g).forEach(g=>g.forEach((day,d)=>day.forEach((x,p)=>{if(x&&x.t===t)m[d+"|"+p]={...x,l2:x.sec}})));return table((d,p)=>m[d+"|"+p]||null)}
+function draw(){const sl=secs(),ts=[...new Set(R.subs.map(s=>s.t))].sort();if(!view||(!sl.includes(view)&&!view.startsWith("T:")))view=sl[0];
+  $("tabs").innerHTML=sl.map(s=>`<button class="tab" data-v="${esc(s)}" aria-pressed="${view===s}">${esc(s)}</button>`).join("")+`<select id="tsel" aria-label="Teacher view" style="width:auto"><option value="">Teacher view…</option>${ts.map(t=>`<option value="T:${esc(t)}"${view==="T:"+t?" selected":""}>${esc(t)}</option>`).join("")}</select>`;
+  $("view").innerHTML=view.startsWith("T:")?`<h3 style="margin-bottom:8px;font-size:17px">${esc(view.slice(2))}</h3>`+teachTable(view.slice(2)):secTable(view);
+  $("lg").innerHTML=[...new Set(R.subs.map(s=>s.name))].map(n=>`<span style="--c:${col(n)}">${esc(n)}</span>`).join("");
+  const P=S.cfg.periods*S.cfg.days,wl={};R.subs.forEach(s=>{wl[s.t]=wl[s.t]||{n:0,secs:new Set()};wl[s.t].n+=s.n;wl[s.t].secs.add(s.sec)});
+  $("wl").innerHTML=`<table class="wl"><thead><tr><th>Teacher</th><th>Periods / week</th><th>Sections</th><th>Free periods</th></tr></thead><tbody>${Object.entries(wl).sort((a,b)=>b[1].n-a[1].n).map(([t,v])=>`<tr><td>${esc(t)}</td><td>${v.n}</td><td>${[...v.secs].map(esc).join(", ")}</td><td>${P-v.n}</td></tr>`).join("")}</tbody></table>`}
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(b){view=b.dataset.v;draw()}});
+$("tabs").addEventListener("change",e=>{if(e.target.id==="tsel"&&e.target.value){view=e.target.value;draw()}});
+function run(){readCfg();save();const errs=check();$("out").classList.remove("s");
+  if(errs.length){$("err").innerHTML=`<div class="er" role="alert"><b>Fix these first:</b><ul>${errs.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`;return}
+  const r=solve();
+  if(!r.ok){$("err").innerHTML=`<div class="er" role="alert"><b>No clash-free timetable found after ${r.at} attempts.</b><ul><li>Reduce periods for the busiest teacher or add another teacher.</li><li>Raise the daily limit per teacher, or add a period to the day.</li><li>Check that labs are not taking too many double blocks.</li></ul></div>`;return}
+  $("err").innerHTML="";r.b=build(r);R=r;
+  $("meta").textContent=`Solved in ${r.ms} ms after ${r.at} attempt${r.at===1?"":"s"}.`;
+  const free=secs().map(s=>S.cfg.days*S.cfg.periods-r.subs.filter(x=>x.sec===s).reduce((a,x)=>a+x.n,0));
+  $("stat").innerHTML=`<div class="${r.b.clashes?"":"good"}"><small>Clashes</small><b>${r.b.clashes}</b></div><div><small>Periods placed</small><b>${r.b.tot} / ${r.b.need}</b></div><div><small>Sections</small><b>${secs().length}</b></div><div><small>Free periods per section</small><b>${free.join(" · ")}</b></div>`;
+  $("out").classList.add("s");draw();if(!run.n){$("out").scrollIntoView({behavior:"smooth",block:"start"});run.n=1}}
+$("go").onclick=()=>{run.n=0;run()};$("rg").onclick=()=>{run();toast("New timetable generated")};
+
+/* export */
+$("pa").onclick=()=>{$("pr").innerHTML=secs().map(s=>`<section><h2>Timetable: ${esc(s)}</h2>${secTable(s)}</section>`).join("");setTimeout(()=>print(),60)};
+$("cv").onclick=()=>{const c=S.cfg,v=view.startsWith("T:")?null:view,rowsOut=[["Period","Time",...DAYS.slice(0,c.days)]];
+  for(let p=0;p<c.periods;p++){rowsOut.push([`P${p+1}`,tm(p),...Array.from({length:c.days},(_,d)=>{const x=v?R.b.g[v][d][p]:Object.values(R.b.g).map(g=>g[d][p]).find(y=>y&&y.t===view.slice(2));return x?`${x.name} (${v?x.t:x.sec})`:"Free"})])}
+  const txt=rowsOut.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",")).join("\n");
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("CSV copied. Paste it into Excel or Sheets"),()=>{const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand("copy");toast("CSV copied")}catch(e){toast("Copy not available here")}t.remove()})};
+$("th").onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=d?"light":"dark";try{localStorage.setItem("slotly-theme",r.dataset.theme)}catch(e){}};
+try{const t=localStorage.getItem("slotly-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}
+fillForm();
+</script>
+</body>
+</html>
